@@ -21,8 +21,8 @@ def extract_wwr_jobs(term):
       job_info['idx'] = idx
       job_info['title'] = list(i.find_all("span",class_="title"))[0].string.strip()
       job_info['company'] = list(i.find_all("span",class_="company"))[0].string.strip()
-      job_info['date'] = list(i.find_all("span",class_="date"))[0].string.strip()
+      if i.find_all("span",class_="date"):
+        job_info['date'] = list(i.find_all("span",class_="date"))[0].string.strip()
       job_info['region'] = list(i.find_all("span",class_="region company"))[0].string.strip()
       jobs.append(job_info)
     return jobs
-
