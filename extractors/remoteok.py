@@ -12,40 +12,48 @@ def extract_remoteok_jobs(term):
     
     soup = BeautifulSoup(response.text, "html.parser")
     sections = soup.find_all('td',class_="company_and_position")
-    tags = soup.find_all('td', class_="tags")
-  
+    # tags = soup.find_all('td', class_="tags")
     jobs=[]
     idx = 0
     for i in sections:
       idx+=1
       job_info = {}
       job_info['idx'] = idx
-      job_info['title'] = list(i.find_all("h2"))[0].string.strip()
-      job_info['company'] = list(i.find_all("h3"))[0].string.strip()
+      job_info['title'] = list(i.find_all("h2"))[0].string.strip().replace(","," ")
+      job_info['company'] = list(i.find_all("h3"))[0].string.strip().replace(","," ")
       locations = i.find_all("div", class_="location")
-      more_info=[]
-      for j in locations:
-         more_info.append(j.string)
-      job_info['more_info'] = more_info
-      jobs.append(job_info)
-  
-    idx = 0
-    for i in tags:
-      idx+=1
-      job_info = {}
-      tag_dict=[]
+      if locations:
+        job_info['region'] = locations[0].string.replace(","," ")
+
+      for href in i.find_all("a",href=True):
+        job_info['href'] = "https://remoteok.com"+ href["href"]
+
       
-      tag = i.find_all("h3")
-      for j in tag:
-        tag_dict.append(j.string.strip())
-      job_info['tags'] = tag_dict  
-      jobs[idx-1].update(job_info)
+
+      # more_info=[]
+      # for j in locations:
+      #    more_info.append(j.string)
+      # job_info['more_info'] = more_info
+      if len(job_info)>4:
+        jobs.append(job_info)
+  
+    # idx = 0
+    # for i in tags:
+    #   idx+=1
+    #   job_info = {}
+    #   tag_dict=[]
+      
+    #   tag = i.find_all("h3")
+    #   for j in tag:
+    #     tag_dict.append(j.string.strip())
+    #   job_info['tags'] = tag_dict  
+    #   jobs[idx-1].update(job_info)
     
     return jobs
-
-    for k in jobs:
-      print('\n\n')
-      for key_, values_ in k.items():
-        if values_ == []:
-          values_ = "X"
-        print(key_,"==>", values_)
+# jobs = extract_remoteok_jobs("react")
+# for k in jobs:
+#   print('\n\n')
+#   for key_, values_ in k.items():
+#     if values_ == []:
+#       values_ = "X"
+#     print(key_,"==>", values_)
